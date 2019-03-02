@@ -82,7 +82,7 @@ class BOM_plots:
 
         # add each city's graph to the plot
         for (city, city_class), colour in zip(self.all_data.items(),colours):
-            x_values = [elem for elem in range(len(city_class.halfhourly_temps))]
+            x_values = list(map(self.time_to_axis_value, city_class.time_labels))
             p.xaxis.major_label_overrides = {key: time for key, time in zip(range(len(x_labels)),x_labels)}
             # p.line([24,34], [city_class.daily_max, city_class.daily_max], line_width = 2, line_color = colour, line_dash = 'dashed',legend = 'Forecasted max')
             p.line(x_values, city_class.halfhourly_temps, line_width = 2, legend = city.capitalize() + ' temperature', line_color = colour)
@@ -97,7 +97,8 @@ class BOM_plots:
 
         show(p)
 
-    def make_x_labels(self):
+    @staticmethod
+    def make_x_labels():
         hours_in_day = 24
         nums = [elem + 1 for elem in range(int(hours_in_day/2))]
         nums = nums[-1:] + nums[:-1]
@@ -109,12 +110,37 @@ class BOM_plots:
 
         return labels
 
+    def time_to_axis_value(self,time_str):
+        '''
+        :param time_str: string in the format hh:mmxx, where hh is between 01 and 12, mm between 00 and 59
+        and xx is am or pm
+        :return: the time time_str as a float (ie. number of hours after midnight)
+        '''
+        if not isinstance(time_str, str):
+            raise Exception('Input must be a string')
+        if len(time_str) != 7:
+            raise Exception('Input string ' + time_str + ' must have length 7')
+
+        hours = float(time_str[:2])
+        minutes = float(time_str[3:5])
+        meridiem = time_str[-2:]
+        if hours < 1 or hours > 12:
+            raise Exception('The number of hours in ' + time_str + ' must be between 1 and 12')
+        if minutes < 0 or minutes > 59:
+            raise Exception('The number of minutes in ' + time_str + ' must be between 0 and 59')
+        if meridiem not in ['am', 'pm']:
+            raise Exception('The last two characters of ' + time_str + ' must be am or pm')
+
+        return 2*((hours if hours != 12.0 else 0) + minutes / 60.0 + (12.0 if meridiem == 'pm' else 0.0))
+
+
+
 if __name__ == '__main__':
     today = BOM_plots('brisbane')
-    today.plot()
-    # today('sydney')
-    # today(['melbourne','canberra'])
     # today.plot()
+    today('sydney')
+    today(['melbourne','canberra'])
+    today.plot()
     # print(today.halfhourly_temps)
     # today.initialise_plot()
     # show(today.graph)
