@@ -1,12 +1,17 @@
-import requests
-from bs4 import BeautifulSoup
-from bokeh.plotting import figure
-from bokeh.io import show
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    from bokeh.plotting import figure
+    from bokeh.io import show
 
-# select a palette
-from bokeh.palettes import Dark2_5 as palette
-# itertools handles the cycling
-import itertools
+    # select a palette
+    from bokeh.palettes import Dark2_5 as palette
+    # itertools handles the cycling
+    import itertools
+except ModuleNotFoundError as e:
+    print(e)
+    input('Press enter to exit')
+    raise Exception('Modules not installed')
 
 class BOM_plots:
     def __init__(self,city_list):
@@ -136,14 +141,10 @@ class BOM_plots:
 
 
 if __name__ == '__main__':
+    # initialise class and collect data from Brisbane
     today = BOM_plots('brisbane')
-    # today.plot()
+    # add data from Sydney
     today('sydney')
-    today(['melbourne','canberra'])
+    # add data from both Melbourne and Canberra
+    today(['melbourne','canBerra'])
     today.plot()
-    # print(today.halfhourly_temps)
-    # today.initialise_plot()
-    # show(today.graph)
-    # today.plot()
-
-# http://www.bom.gov.au/australia/majorcities.shtml
