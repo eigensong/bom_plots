@@ -13,6 +13,8 @@ except ModuleNotFoundError as e:
     input('Press enter to exit')
     raise Exception('Modules not installed')
 
+
+
 class BOM_plots:
     def __init__(self,city_list):
         if type(city_list) is str:
