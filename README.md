@@ -1,4 +1,4 @@
-# bom_plots
+# Bureau of Meteorology - plots
 Plot the current day's temperature from midnight to the current time. Data taken from the Bureau of Meteorology webpage www.bom.gov.au.
 
 
